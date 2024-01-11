@@ -56,6 +56,8 @@ public interface IResponse {
 
     void location(String path);
 
+    void redirect(String path);
+
     void redirect(int status, String path);
 
     void render(String viewName);

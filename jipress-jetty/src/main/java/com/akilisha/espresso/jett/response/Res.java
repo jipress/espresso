@@ -162,12 +162,17 @@ public class Res implements IResponse {
 
     @Override
     public void location(String path) {
+        this.redirect(301, path);
+    }
+
+    @Override
+    public void redirect(String path) {
         this.redirect(302, path);
     }
 
     @Override
     public void redirect(int status, String path) {
-        this.status(301);
+        this.status(status);
         this.set("Location", path);
         this.send("");
     }

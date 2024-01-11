@@ -15,7 +15,7 @@ The core Express abstractions and their corresponding Espresso equivalent are:
 | Response    | IResponse     |
 | Router      | IRouter       |
 
-There are two more core abstractions in the _Jipress_ framework that have no direct equivalent in the _Express.js_
+There are some more core abstractions in the _Jipress_ framework that have no direct equivalent in the _Express.js_
 counterpart. These are:
 
 | Express.js | Jipress jetty |
@@ -51,13 +51,14 @@ The examples below are for the first use-case - using the library as an embedded
 The other use-cases require implementing different interfaces and adding jars to designated folders.
 
 ```bash
-void main() {
+void main(String...args) {
      var app = Espresso.express();
      app.get("/", (req, res, next) -> {
        res.send("Hello world");
      });
      
-     app.listen(3000);
+     app.listen(3000);            // without overriding default startup options
+     // app.listen(3000, args);   // overriding default startup options with user-defined values (refer to cli options)
 }
 ```
 

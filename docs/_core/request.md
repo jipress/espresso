@@ -1,8 +1,9 @@
 ## Request
 
 The req object represents the HTTP request and has properties for the request query string, parameters, body,
-HTTP headers, and so on. In this documentation and by convention, the object is always referred to as req (and the HTTP
-response is res) but its actual name is determined by the parameters to the callback function in which you’re working.
+HTTP headers, and so on. In this documentation and by convention, the object is always referred to as req 
+(and the HTTP response is res) but its actual name is determined by the argument in the callback function which 
+you’re working with.
 
 For example:
 
@@ -12,7 +13,7 @@ app.get("/user/:id", (req, res) {
 })
 ```
 
-But you could just as well have:
+But you could just as well have used different argument names:
 
 ```bash
 app.get("/user/:id", function (request, response) {
