@@ -455,12 +455,182 @@ public static void main(String[] args) {
 
 #### void use(CorsOptions options);
 
-Configure CORS options when using cross domain clients
+Configure CORS options when using cross-domain clients
 
 ```bash
     var app = express();
-    app.use(new CorsOptions());
+    app.use(CorsOptions.wideOpen());
 ```
+
+Using the ```wideOpen``` function as shown above, should _ONLY_ be considered for purely testing purposes, since it's
+the most permissive configuration that can be achieved to make things. A more controlled configuration can be achieved
+by using the _CorsBuilder_.
+
+To illustrate CORS further, consider having two apps - one being a data source and the other being a data client
+
+> The data Source
+
+```java
+public static void main(String[] args) {
+    var app = Espresso.express();
+    app.use(Espresso.text());
+
+    app.get("/time", (req, res, next) -> {
+        res.send(new Date().toString());
+    });
+
+    app.listen(3031);
+}
+```
+
+> The data client - remember to start the second one with command line argument ```-securePort 3444``` to override the
+> default
+
+```java
+public static void main(String[] args) {
+    var app = Espresso.express();
+    app.use("/", IStaticOptionsBuilder.newBuilder()
+            .baseDirectory("jipress-demos/www")
+            .welcomeFiles("cors-handlers.html")
+            .build());
+
+    app.listen(3030, args);
+}
+```
+
+> The data client - browser request in ```cors-handlers.html```
+
+```html
+
+<body>
+<a href="http://localhost:3031/time">Click to view time now</a>
+<h1></h1>
+<script>
+    document.querySelector("a").addEventListener('click', ev => {
+        ev.preventDefault();
+        fetch(ev.target.href, res => {
+            document.querySelector("h1").innerHTML = res.text;
+        })
+    })
+</script>
+</body>
+```
+
+When the link on the page is clicked, a ```GET http://localhost:3031/time``` request is made, but this is not in the
+same domain as the one which is hosting the web page (hence cross-site). An error is returned, and can be view through
+the browser's developer tools
+
+![cor missing allow origin header](../_media/cors-missing-allow-origin.png)
+
+To overcome this, the server needs to be configured to return the ```Access-Control-Allow-Origin ``` and the value
+could be either specific to the requesting server, in this case like ```http://localhost:3030``` or much more loose,
+like using ```*```
+
+```bash
+var app = Espresso.express();
+app.use(Espresso.text());
+app.use(CorsBuilder.newBuilder()
+       .response(bld -> bld.allowOrigin("http://localhost:3030").build())
+       .build());
+
+app.get("/time", (req, res, next) -> {
+   res.send(new Date().toString());
+});
+
+app.listen(3031);
+```
+
+![Cors with Origin allowed](../_media/cors-with-origin-allowed.png)
+
+Upon inspecting the response in the browser further, the configured header is now in the response body.
+
+![allowed origin header](../_media/access-control-allow-origin-header.png)
+
+With CORS, there is another concept called _preflight requests_, and this is what the _OPTIONS_ http method
+accomplishes.
+It is an additional check which is not applied to _GET_ but it is applied to the other non-idempotent http methods.
+
+In the _data source_ app, add a new request handler for _PUT_ requests
+
+```bash
+app.put("/time", (req, res, next) -> {
+   res.send(new Date().toString());
+});
+```
+
+In the _data_client_ app, change the browser script to use _PUT_ instead of _GET_.
+
+```js
+document.querySelector("a").addEventListener('click', ev => {
+    ev.preventDefault();
+    fetch(ev.target.href, {method: 'PUT'}, res => {
+        document.querySelector("h1").innerHTML = res.text;
+    })
+})
+```
+
+Restart both apps and make the same request as before.
+
+When the server is not handling pre-flight requests, the request will fail as shown below.
+
+![no pre-flight checks failure](../_media/pre-flight-check-failure.png)
+
+When the server is handling pre-flight requests, but the request method is not configured, the request will fail as
+shown below.
+
+![pre-flight check without method](../_media/pre-flight-no-method-failure.png)
+
+To correct this, the request method should be configured, and the configured methods should contain the method specified
+in the _Allow-Control-Request-Method_ header (if using a browser, this header is typically inserted in the request
+automatically).
+
+```bash
+app.use(CorsBuilder.newBuilder()
+.response(bld -> bld
+      .allowOrigin("http://localhost:3030")
+      .allowHeaders("PUT")
+      .build())
+.build());
+```
+
+After configuring and restarting the _data source_, the response should now look good.
+
+![pre-flight successful](../_media/pre-flight-method-check-ok.png)
+
+Another dimension of CORS is when using credentials from the client. In the client, make this update to see the effect.
+
+```js
+document.querySelector("a").addEventListener('click', ev => {
+    ev.preventDefault();
+    fetch(ev.target.href, {
+        method: 'PUT', credentials: "include",
+    }, res => {
+        document.querySelector("h1").innerHTML = res.text;
+    })
+})
+```
+
+Upon making the same request in the browser and inspecting the response, CORS once again find away to crash the party.
+
+![credentials conft configured failure](../_media/allow-credentials-header-not-configured.png)
+
+To resolve this, an additional configuration needs to be done in the _data server_ app.
+
+```bash
+app.use(CorsBuilder.newBuilder()
+ .response(bld -> bld
+         .allowOrigin("http://localhost:3030")
+         .allowMethods("PUT")
+         .allowCredentials(true)
+         .build())
+ .build());
+```
+
+And the result now is back to looking good
+
+![access-control-allow-credentials_ok](../_media/access-control-allow-credentials_ok.png)
+
+The _CorsBuilder_ has additional methods for more CORS configuration options.
 
 #### void use(String usePath, IApplication subApp)
 

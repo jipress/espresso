@@ -42,9 +42,9 @@ public class StartUp {
         return instance;
     }
 
-    public static StartUp instance() {
-        // if start up instance is missing, no args will be parsed
-        return load(OptBuilder.newBuilder());
+    public static StartUp instance(String[] args) {
+        // if start-up instance is missing, no args will be parsed
+        return load(OptBuilder.newBuilder(), args);
     }
 
     public String cacertsPath() {

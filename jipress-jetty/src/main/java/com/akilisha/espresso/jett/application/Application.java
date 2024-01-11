@@ -134,8 +134,8 @@ public class Application extends Router implements IApplication, Cloneable {
     }
 
     @Override
-    public void listen(String host, int port, Consumer<String> callback) throws RuntimeException {
-        Espresso.startServer(host, port, callback, this);
+    public void listen(String host, int port, String[] args, Consumer<String> callback) throws RuntimeException {
+        Espresso.startServer(host, port, args, callback, this);
     }
 
     @Override

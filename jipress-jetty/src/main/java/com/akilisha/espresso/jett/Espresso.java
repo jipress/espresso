@@ -153,9 +153,9 @@ public class Espresso {
         return contextHandler;
     }
 
-    public static Server create(String host, int port, IApplication entryApp) {
+    public static Server create(String host, int port, String[] args, IApplication entryApp) {
         //extract startup options
-        StartUp props = StartUp.instance();
+        StartUp props = StartUp.instance(args);
 
         // extract startup values
         String hostName = props.getOrDefault(StartupEnv.SERVER_HOST.property, host);
@@ -247,9 +247,9 @@ public class Espresso {
         return sslContextFactory;
     }
 
-    public static void startServer(String host, int port, Consumer<String> callback, IApplication entryApp) {
+    public static void startServer(String host, int port, String[] args, Consumer<String> callback, IApplication entryApp) {
         try {
-            Server server = create(host, port, entryApp);
+            Server server = create(host, port, args, entryApp);
 
             // figure out mounted paths
             List<String> mountPaths = new LinkedList<>();
@@ -264,7 +264,7 @@ public class Espresso {
             }
 
             // if using secure protocol, rewrite url to https
-            Boolean redirectSecure = StartUp.instance().getOrDefault(StartupEnv.REDIRECT_SECURE.property, Boolean::parseBoolean, (boolean) StartupEnv.REDIRECT_SECURE.value);
+            Boolean redirectSecure = StartUp.instance(args).getOrDefault(StartupEnv.REDIRECT_SECURE.property, Boolean::parseBoolean, (boolean) StartupEnv.REDIRECT_SECURE.value);
             if (redirectSecure) {
                 handlerList.addHandler(new SecuredRedirectHandler());
             }
