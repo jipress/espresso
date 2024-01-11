@@ -73,7 +73,7 @@ public class PathUtils {
         if (pathInfoMatcher.find()) {
             int i = 0;
             while (i++ < pathInfoMatcher.groupCount()) {
-                if (pathInfoMatcher.groupCount() > 1 && pathMatcher.find()) {
+                if (pathInfoMatcher.groupCount() > 0 && pathMatcher.find()) {
                     String group = pathInfoMatcher.group(i);
                     String key = pathMatcher.group(1);
                     matches.put(key, group);

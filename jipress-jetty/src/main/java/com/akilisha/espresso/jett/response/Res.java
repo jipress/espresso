@@ -89,6 +89,8 @@ public class Res implements IResponse {
 
     @Override
     public void clearCookie(String name, CookieOptions options) {
+        // Cookies are tied to a specific path. Attention should be paid to set the same path during cookie's removal
+        // as it was as during cookie's creation.
         Cookie cookie = CookieBuilder.newBuilder(name, null, options).build(request);
         cookie.setMaxAge(0); // Don't set to -1, or it will become a session cookie!
         this.response.addCookie(cookie);

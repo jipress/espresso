@@ -25,7 +25,7 @@ public interface IRequest {
 
     String ip();
 
-    String[] ips();
+    List<String> ips();
 
     String method();
 

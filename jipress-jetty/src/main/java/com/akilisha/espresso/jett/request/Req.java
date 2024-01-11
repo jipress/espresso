@@ -1,5 +1,6 @@
 package com.akilisha.espresso.jett.request;
 
+import com.akilisha.espresso.api.application.AppSettings;
 import com.akilisha.espresso.api.application.IApplication;
 import com.akilisha.espresso.api.content.IBodyParser;
 import com.akilisha.espresso.api.request.IRequest;
@@ -106,8 +107,15 @@ public class Req implements IRequest {
     }
 
     @Override
-    public String[] ips() {
-        return new String[]{this.ip()};
+    public List<String> ips() {
+        boolean trustProxy= Boolean.parseBoolean(
+                Objects.requireNonNullElse(app.get(AppSettings.Setting.TRUST_PROXY.property), false).toString());
+        if(trustProxy){
+            String forwardedIp = request.getHeader("X-Forwarded-For");
+            return List.of(forwardedIp.split(","));
+        }
+
+        return Collections.emptyList();
     }
 
     @Override
