@@ -277,7 +277,11 @@ app.get("/",  (req, res, next) {
 
 #### void listen(int port)
 
+#### void listen(int port, String[] args)
+
 #### void listen(String host, int port, Consumer<String> callback)
+
+### void listen(String host, int port, String[] args, Consumer<String> callback)
 
 Binds and listens for connections on the specified host and port.
 
@@ -290,6 +294,14 @@ If host is omitted, then localhost will be implied and used
 ```bash
 var app = express()
 app.listen(3000)
+```
+
+When the _args_ parameter is included, the command line arguments are passed along and applied to the options available
+for starting the server up.
+
+```bash
+var app = express()
+app.listen(3000, args)
 ```
 
 #### void method(String name, String path, IMiddleware... middlewares)
@@ -383,7 +395,7 @@ Returns the rendered HTML of a view via the callback function. It accepts an opt
 containing local variables for the view. It is like res.render(), except it cannot send the rendered view to the client
 on its own.
 
-It's actually used by the IResponse instance to generate content, which then the IResponse instance send to the client
+It's actually used by the IResponse instance to generate content, which then the IResponse instance sends to the client
 
 ```bash
  @Override
@@ -462,13 +474,15 @@ Configure CORS options when using cross-domain clients
     app.use(CorsOptions.wideOpen());
 ```
 
-Using the ```wideOpen``` function as shown above, should _ONLY_ be considered for purely testing purposes, since it's
-the most permissive configuration that can be achieved to make things. A more controlled configuration can be achieved
-by using the _CorsBuilder_.
+Using the ```wideOpen``` function as shown above, should _ONLY_ be considered for testing purposes only, since it is
+the most permissive configuration that can be achieved. A more controlled configuration should be created by using the 
+_CorsBuilder_.
 
-To illustrate CORS further, consider having two apps - one being a data source and the other being a data client
+To illustrate CORS further, consider having two apps:
 
-> The data Source
+- The data source app
+
+> The data source make available data to be consumed by interested clients
 
 ```java
 public static void main(String[] args) {
@@ -482,9 +496,9 @@ public static void main(String[] args) {
     app.listen(3031);
 }
 ```
+- The data client app
 
-> The data client - remember to start the second one with command line argument ```-securePort 3444``` to override the
-> default
+> Remember to start the second one with command line argument ```-securePort 3444``` to override any matching defaults
 
 ```java
 public static void main(String[] args) {
@@ -498,7 +512,7 @@ public static void main(String[] args) {
 }
 ```
 
-> The data client - browser request in ```cors-handlers.html```
+The data client contains the ```cors-handlers.html``` page which is used to initiate http requests from the browser.
 
 ```html
 

@@ -64,7 +64,7 @@ public interface IApplication extends IRouter {
     }
 
     default void listen(String host, int port, Consumer<String> callback) {
-        listen("localhost", port, new String[]{}, System.out::println);
+        listen(host, port, new String[]{}, callback);
     }
 
     void listen(String host, int port, String[] args, Consumer<String> callback) throws RuntimeException;
