@@ -80,6 +80,10 @@ public class DocumentationDemo {
             res.json(List.of(first, second));
         });
 
+        app.get("/headers", (req, res, next) -> {
+            res.json(List.of(req.get("Content-Type"), req.get("content-type"), req.get("Something")));
+        });
+
         app.listen(3031);
     }
 }

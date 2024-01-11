@@ -108,10 +108,10 @@ public class Req implements IRequest {
 
     @Override
     public List<String> ips() {
-        boolean trustProxy= Boolean.parseBoolean(
+        boolean trustProxy = Boolean.parseBoolean(
                 Objects.requireNonNullElse(app.get(AppSettings.Setting.TRUST_PROXY.property), false).toString());
-        if(trustProxy){
-            String forwardedIp = request.getHeader("X-Forwarded-For");
+        if (trustProxy) {
+            String forwardedIp = Objects.requireNonNullElse(request.getHeader("X-Forwarded-For"), "");
             return List.of(forwardedIp.split(","));
         }
 
@@ -178,15 +178,16 @@ public class Req implements IRequest {
     }
 
     @Override
-    public Boolean signedCookies() {
-        throw new RuntimeException("Not yet implemented");
+    public ReqCookies signedCookies() {
+        return cookies();
     }
 
     @Override
     public String[] subdomains() {
+        int subDomainOffset = app.get(AppSettings.Setting.SUBDOMAIN_OFFSET.property, o -> Integer.parseInt(o.toString()));
         String[] splits = request.getRemoteAddr().split("\\.");
-        if (splits.length > 2) {
-            String[] result = new String[splits.length - 2];
+        if (splits.length > subDomainOffset) {
+            String[] result = new String[splits.length - subDomainOffset];
             System.arraycopy(splits, 0, result, 0, result.length);
             return result;
         }
@@ -206,7 +207,7 @@ public class Req implements IRequest {
 
     @Override
     public String get(String headerName) {
-        return this.request.getHeader(headerName);
+        return Objects.requireNonNullElse(this.request.getHeader(headerName), "undefined");
     }
 
     @Override

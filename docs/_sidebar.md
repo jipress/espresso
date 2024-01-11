@@ -4,3 +4,6 @@
 * [IRequest](_core/request.md)
 * [IResponse](_core/response.md)
 * [IRouter](_core/router.md)
+* [IPlugin](_core/plugin.md)
+* [IExtension](_core/extension.md)
+* [CLI Options](_core/clioptions.md)

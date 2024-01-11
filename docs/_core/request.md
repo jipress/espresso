@@ -206,8 +206,8 @@ app.get("/ip", (req, res, next) -> {
 
 #### List<String> ips()
 
-When the trust proxy setting does not evaluate to false, this property contains an array of IP addresses specified in 
-the X-Forwarded-For request header. Otherwise, it contains an empty array. This header can be set by the client or by 
+When the trust proxy setting does not evaluate to false, this property contains an array of IP addresses specified in
+the X-Forwarded-For request header. Otherwise, it contains an empty array. This header can be set by the client or by
 the proxy.
 
 ```bash
@@ -342,20 +342,78 @@ app.get("/secure", (req, res, next) -> {
 
 #### Boolean signedCookies()
 
+Returns the same value as ```req.cookies()```
+
 #### String[] subdomains()
+
+An array of subdomains in the domain name of the request.
 
 #### boolean xhr()
 
+A Boolean property that is true if the request’s X-Requested-With header field is “XMLHttpRequest”, indicating that the
+request was issued by a client library such as jQuery.
+
 #### Boolean accepts(String... types)
+
+Checks if the specified content types are acceptable, based on the request’s Accept HTTP header field. The method
+returns the best match, or if none of the specified content types is acceptable, returns false (in which case, the
+application should respond with 406 "Not Acceptable").
+
+The type value may be a single MIME type string (such as “application/json”), an extension name such as “json”,
+a comma-delimited list, or an array
+
+```bash
+// Accept: text/html
+req.accepts('html')
+// => "html"
+
+// Accept: text/*, application/json
+req.accepts('html')
+// => "html"
+req.accepts('text/html')
+// => "text/html"
+req.accepts(['json', 'text'])
+// => "json"
+req.accepts('application/json')
+// => "application/json"
+
+// Accept: text/*, application/json
+req.accepts('image/png')
+req.accepts('png')
+// => false
+```
 
 #### String get(String headerName)
 
+Returns the specified HTTP request header field (case-insensitive match).
+
+```bash
+// curl http://localhost:3031/headers -H "Content-Type: text/plain"
+app.get("/headers", (req, res, next) -> {
+    res.json(List.of(req.get("Content-Type"), req.get("content-type"), req.get("Something")));
+});
+// => ["text/plain","text/plain","undefined"]
+```
+
 #### Boolean is(String contentType)
+
+Return true if the _contentType_ parameter matches any part of the values returned by ```req.get(headerName)```
 
 #### Object getAttr(String name)
 
+Return a value cached by name in the underlying _servlet request_ object
+
 #### void setAttr(String name, Object attr)
+
+Cache a value by name in the underlying _servlet request_ object
 
 #### byte[] readSync()
 
+Read bytes from the underlying servlet input stream in a blocking manner
+
 #### <R> R rawRequest(Class<R> type)
+
+An _escape chute_ into the underlying _servlet request_ object. This is analogous to the point where you decide to race
+cars but without strapping on any safety harness. Another comparable _escape chute_ is when creating app extensions,
+whereby you can create an entire application around a _servlet context_, and then add this context handler into the
+framework's collection of context handlers.

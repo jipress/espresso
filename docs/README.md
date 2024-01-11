@@ -13,7 +13,16 @@ The core Express abstractions and their corresponding Espresso equivalent are:
 | Application | IApplication  |
 | Request     | IRequest      |
 | Response    | IResponse     |
-| Router      | IRouter       | 
+| Router      | IRouter       |
+
+There are two more core abstractions in the _Jipress_ framework that have no direct equivalent in the _Express.js_
+counterpart. These are:
+
+| Express.js | Jipress jetty |
+|------------|---------------|
+| none       | IExtension    |
+| none       | IPlugin       |
+| none       | CLI Options   |
 
 Although an instance of Espresso can be started using default configuration values alone, it may sometimes become
 necessary to override the defaults using custom values. This can be accomplished through the use of a separate module,

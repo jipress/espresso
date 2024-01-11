@@ -47,7 +47,7 @@ public interface IRequest {
 
     Boolean secure();
 
-    Boolean signedCookies();
+    ReqCookies signedCookies();
 
     String[] subdomains();
 

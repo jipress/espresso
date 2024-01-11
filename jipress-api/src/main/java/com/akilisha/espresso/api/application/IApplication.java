@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public interface IApplication extends IRouter {
 
@@ -40,6 +41,10 @@ public interface IApplication extends IRouter {
     void engine(IViewEngine engine, String fileExt);
 
     Object get(String setting);
+
+    default <T> T get(String setting, Function<Object, T> converter) {
+        return converter.apply(get(setting));
+    }
 
     default void listen() throws RuntimeException {
         AtomicInteger port = new AtomicInteger();

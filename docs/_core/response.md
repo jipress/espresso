@@ -16,10 +16,10 @@
 
 #### void clearCookie(String name)
 
-Cookies are tied to a specific path. Attention should be paid to ensure that the same path used during the cookie's 
-removal matches exactly the same path used during the cookie's creation. The path defaults to the currently requested 
-folder in the URL (and would thus only be available in the same folder or all its subfolders). It's better to 
-explicitly specify the path, otherwise it would be dependent on the currently requested folder in the URL. The cookie 
+Cookies are tied to a specific path. Attention should be paid to ensure that the same path used during the cookie's
+removal matches exactly the same path used during the cookie's creation. The path defaults to the currently requested
+folder in the URL (and would thus only be available in the same folder or all its subfolders). It's better to
+explicitly specify the path, otherwise it would be dependent on the currently requested folder in the URL. The cookie
 path information is like the maxAge in the sense that it is not available in the request cookie header.
 
 #### void clearCookie(String name, CookieOptions options)
