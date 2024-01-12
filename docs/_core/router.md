@@ -109,5 +109,6 @@ Refer to ```router.METHOD()``` section
 
 Refer to ```router.METHOD()``` section
 
-> Some methods like router.param(name, callback) and router.use([path], [function, ...] function) found in the Router
-> are not in IRouter. They are found in IApplication where their functionality maps better.
+> Some methods like router.param(name, callback) and router.use([path], [function, ...] function) found in the
+> Express.js Router are not in the Jipress IRouter. They are found in IApplication where their functionality maps over
+> better.

@@ -40,12 +40,12 @@ A _plugin_ differs from an _extension_ in several significant ways:
 
 1. Plugins implement the _IPlugin_ interface while Extensions implement the _IExtension_
 2. In a _Plugin_, the implementing class is provided with a _IRouter_ where it can then attach instances of
-   _Middleware_, and then the application will add this _IRouter_ to itself as a child application.
+   _IMiddleware_, and then the application will add this _IRouter_ to itself as a child application.
 3. In an _Extension_, the implementing class is provided with an _extensionPoint_ where it can then attach onto
    additional behavior - ```<T> void extendWith(T extensionPoint)``. Specifically, the extension point is the
    _ContextHandlerCollection_ and the additional behavior is in the form of a new ContextHandler.
 4. The level of familiarity with the underlying infrastructure necessary to implement either of the two options is more
-   low-level when working with _IExtension_than when working with _IPlugin_
+   low-level when working with _IExtension_ than when working with _IPlugin_
 
 The examples below are for the first use-case - using the library as an embedded http server in an application.
 The other use-cases require implementing different interfaces and adding jars to designated folders.
@@ -276,8 +276,8 @@ app.post("/download", (req, res, next) -> {
 app.listen(3000);
 ```
 
-Although error handling is handled using a default error handler, it may sometime be necessary to tailor how the
-error is interpreted and transmitted back to the client. In such cases, the _IErrorHandler_ interface ia available for
+Although error handling is accomplished using a default error handler, it may sometime be necessary to tailor how the
+error is interpreted and transmitted back to the client. In such cases, the _IErrorHandler_ interface is available for
 use.
 
 ```bash
@@ -448,8 +448,9 @@ function closeConn() {
 > Plugin implementation
 
 Each of the direct implementations for the _IPlugin_ interface implements the _find(String identifier)_ function,
-which marks a clear point of separation why sub-interfaces diverge. For example, the _IRouterHandlePlugin_ will only
-now deal with the type _IRouterHandle_ moving forward
+which serves as a good place where interface implementations begin to differentiate themselves.
+
+For example, the _IRouterHandlePlugin_ will only now deal with the type _IRouterHandle_ moving forward
 
 ```bash
 public interface IRouterHandlePlugin extends IRouterHandle, IPlugin<IRouterHandle> {
@@ -549,7 +550,7 @@ These links provide some additional reading material on how to configure Jetty f
 1. [Jetty 9 docs](https://eclipse.dev/jetty/documentation/jetty-9/index.html#fastcgi)
 2. [Jetty-Users board](https://www.eclipse.org/lists/jetty-users/msg09434.html)
 
-## Start php interpreter
+## Start a php interpreter
 
 To successfully run WordPress, _Jetty_ will require a _PHP_ interpreter which will handle the _PHP_ requests, and
 then send back the response to _Jetty_, and finally back to the user. For this reason, it's important to configure
