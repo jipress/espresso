@@ -140,8 +140,8 @@ app.all("/*", requireAuthentication)
 app.all("/*", loadUser)
 ```
 
-Another example is whitelisted “global” functionality. The example is similar to the ones above, but it only restricts
-paths that start with “/api”:
+Another example is whitelisted "global" functionality. The example is similar to the ones above, but it only restricts
+paths that start with "/api":
 
 app.all("/api/*", requireAuthentication)
 
@@ -339,8 +339,14 @@ IMiddleware functions; can be:
 #### void param(String[] params, IParamCallback callback)
 
 Add callback triggers to route parameters, where name is the name of the parameter or an array of them, and callback is
-the callback function. The parameters of the callback function are the request object, the response object, the next
-middleware, the value of the parameter and the name of the parameter, in that order.
+the callback function.
+
+The parameters of the callback function are:
+
+- req, the request object.
+- res, the response object.
+- next, indicating the next middleware function.
+- The value of the name parameter.
 
 ```bash
 public static void main(String[] args) {

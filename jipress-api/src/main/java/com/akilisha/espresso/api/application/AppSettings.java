@@ -31,7 +31,7 @@ public class AppSettings extends EnumMap<AppSettings.Setting, Object> {
         JSON_ESCAPE("json escape", Boolean.class, "Enable escaping JSON responses from the res.json, res.jsonp, and res.send APIs. This will escape the characters <, >, and & as Unicode escape sequences in JSON"),
         JSON_REPLACER("json replacer", Object.class, "The 'replacer' argument used by `JSON.stringify`."),
         JSON_SPACES("json spaces", Object.class, "The 'space' argument used by `JSON.stringify`. This is typically set to the number of spaces to use to indent prettified JSON."),
-        QUERY_PARSER("query parser", Object.class, "Disable query parsing by setting the value to false, or set the query parser to use either “simple” or “extended” or a custom query string parsing function."),
+        QUERY_PARSER("query parser", Object.class, "Disable query parsing by setting the value to false, or set the query parser to use either \"simple\" or \"extended\" or a custom query string parsing function."),
         STRICT_ROUTING("string routing", Boolean.class, "Enable strict routing. When enabled, the router treats \"/foo\" and \"/foo/\" as different. Otherwise, the router treats \"/foo\" and \"/foo/\" as the same."),
         SUBDOMAIN_OFFSET("subdomain offset", Number.class, "The number of dot-separated parts of the host to remove to access subdomain."),
         TRUST_PROXY("trust proxy", Boolean.class, "Indicates the app is behind a front-facing proxy, and to use the X-Forwarded-* headers to determine the connection and the IP address of the client."),

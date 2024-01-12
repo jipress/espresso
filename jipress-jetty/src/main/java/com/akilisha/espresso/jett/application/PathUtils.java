@@ -7,11 +7,19 @@ import java.util.stream.Collectors;
 
 public class PathUtils {
 
+    public static final String TOKENIZE_PATH_PARAM_REGEX = "(:[\\w-]+?\\b)";
+    public static final String EXTRACT_PATH_PARAM_REGEX = ":([\\w-]+?\\b)";
+
     private PathUtils() {
     }
 
     public static String pathToRegex(String path) {
-        Pattern pattern = Pattern.compile("(:.+?\\b)");
+        //if a path begins with '^' and ends with a '$' character, this MUST be a regex literal, so return AS-IS,
+        if (path.startsWith("^") && path.endsWith("$")) {
+            return path;
+        }
+        // otherwise, tokenize it into a pattern
+        Pattern pattern = Pattern.compile(TOKENIZE_PATH_PARAM_REGEX);
         Matcher matcher = pattern.matcher(path);
         StringBuilder regex = new StringBuilder("/");
         int start = 1;
@@ -63,8 +71,7 @@ public class PathUtils {
     }
 
     public static Map<String, String> extractPathVariables(String path, String pathInfo) {
-        String pathRegex = ":(.+?\\b)";
-        Matcher pathMatcher = Pattern.compile(pathRegex).matcher(path);
+        Matcher pathMatcher = Pattern.compile(EXTRACT_PATH_PARAM_REGEX).matcher(path);
 
         String pathInfoRegex = PathUtils.pathToRegex(path);
         Matcher pathInfoMatcher = Pattern.compile(pathInfoRegex).matcher(pathInfo);
@@ -73,10 +80,13 @@ public class PathUtils {
         if (pathInfoMatcher.find()) {
             int i = 0;
             while (i++ < pathInfoMatcher.groupCount()) {
-                if (pathInfoMatcher.groupCount() > 0 && pathMatcher.find()) {
+                if (pathMatcher.find()) {
                     String group = pathInfoMatcher.group(i);
                     String key = pathMatcher.group(1);
                     matches.put(key, group);
+                } else {
+                    String group = pathInfoMatcher.group(i);
+                    matches.put(Integer.toString(i - 1), group);
                 }
             }
         }

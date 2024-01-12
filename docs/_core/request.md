@@ -1,8 +1,8 @@
 ## Request
 
 The req object represents the HTTP request and has properties for the request query string, parameters, body,
-HTTP headers, and so on. In this documentation and by convention, the object is always referred to as req 
-(and the HTTP response is res) but its actual name is determined by the argument in the callback function which 
+HTTP headers, and so on. In this documentation and by convention, the object is always referred to as req
+(and the HTTP response is res) but its actual name is determined by the argument in the callback function which
 you’re working with.
 
 For example:
@@ -253,8 +253,8 @@ app.get("/params/:first/then/:next", (req, res, next) -> {
 
 #### Map<String, String> params()
 
-This property is an object containing properties mapped to the named route “parameters”. For example, if you have the
-route /user/:name, then the “name” property is available as req.params.name. This object defaults to {}.
+This property is an object containing properties mapped to the named route "parameters". For example, if you have the
+route /user/:name, then the "name" property is available as req.params.name. This object defaults to {}.
 
 ```bash
 // // curl "http://localhost:3031/params/one/then/two/all"
@@ -351,7 +351,7 @@ An array of subdomains in the domain name of the request.
 
 #### boolean xhr()
 
-A Boolean property that is true if the request’s X-Requested-With header field is “XMLHttpRequest”, indicating that the
+A Boolean property that is true if the request’s X-Requested-With header field is "XMLHttpRequest", indicating that the
 request was issued by a client library such as jQuery.
 
 #### Boolean accepts(String... types)
@@ -360,7 +360,7 @@ Checks if the specified content types are acceptable, based on the request’s A
 returns the best match, or if none of the specified content types is acceptable, returns false (in which case, the
 application should respond with 406 "Not Acceptable").
 
-The type value may be a single MIME type string (such as “application/json”), an extension name such as “json”,
+The type value may be a single MIME type string (such as "application/json"), an extension name such as "json",
 a comma-delimited list, or an array
 
 ```bash
