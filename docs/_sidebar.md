@@ -7,3 +7,4 @@
 * [IPlugin](_core/plugin.md)
 * [IExtension](_core/extension.md)
 * [CLI Options](_core/clioptions.md)
+* [Cloud Ready](_core/cloudready.md)

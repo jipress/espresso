@@ -12,9 +12,9 @@ public class CorsHandlerData {
         app.use(Espresso.text());
         app.use(CorsBuilder.newBuilder()
                 .response(bld -> bld
-                        .allowOrigin("http://localhost:3030")
-                        .allowMethods("PUT")
-                        .allowCredentials(true)
+                        .allowedOrigins("http://localhost:3030")
+                        .allowedMethods("PUT")
+                        .allowedCredentials(true)
                         .build())
                 .build());
 

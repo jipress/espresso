@@ -19,7 +19,12 @@ public enum StartupEnv {
     KEYSTORE_PATH("keystorePath", "path to server's keystore", null),
     KEYSTORE_PASS("keystorePass", "password for server's keystore", null),
     SECURE_PROTOCOL("https", "server's secure protocol", "https"),
-    REDIRECT_SECURE("redirectSecure", "redirect to secure protocol flag", false);
+    REDIRECT_SECURE("redirectSecure", "redirect to secure protocol flag", false),
+    RESOURCE_BASE_DIR("baseDirectory", "base directory for static resources", "www"),
+    RESOURCE_CONTEXT("resourceCtx", "root context path for accessing static resources", "/"),
+    RESOURCE_WELCOME_FILES("welcomeFiles", "comma-separated list of default landing pages", "index.html"),
+    RESOURCE_ACCEPT_RANGES("acceptRanges", "accepts ranges option for static resources", true),
+    RESOURCE_LIST_DIRECTORIES("listDirectories", "list directories option for static resources", false);
 
     public final String property;
     public final String description;
@@ -31,12 +36,7 @@ public enum StartupEnv {
         this.value = defaultValue;
     }
 
-    public static StartupEnv property(String name) {
-        for (StartupEnv setting : values()) {
-            if (setting.property.equals(name)) {
-                return setting;
-            }
-        }
-        throw new RuntimeException("Unknown startup property");
+    public <T> T value(Class<T> type) {
+        return type.cast(this.value);
     }
 }

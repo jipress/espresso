@@ -157,6 +157,13 @@ public class Espresso {
         //extract startup options
         StartUp props = StartUp.instance(args);
 
+        //configure plugin directories
+        Directories.PLUGINS.put(DirectoryInfo.PLUGINS_HOME, props.getOptionValue(DirectoryInfo.PLUGINS_HOME.folder));
+        Directories.PLUGINS.put(DirectoryInfo.ROUTER_HANDLES, props.getOptionValue(DirectoryInfo.ROUTER_HANDLES.folder));
+        Directories.PLUGINS.put(DirectoryInfo.VIEW_ENGINES, props.getOptionValue(DirectoryInfo.VIEW_ENGINES.folder));
+        Directories.PLUGINS.put(DirectoryInfo.BODY_PARSERS, props.getOptionValue(DirectoryInfo.BODY_PARSERS.folder));
+        Directories.PLUGINS.put(DirectoryInfo.CTX_EXTENSIONS, props.getOptionValue(DirectoryInfo.CTX_EXTENSIONS.folder));
+
         // extract startup values
         String hostName = props.getOrDefault(StartupEnv.SERVER_HOST.property, host);
         int httpPort = props.getOrDefault(StartupEnv.SERVER_PORT.property, Integer::parseInt, port);

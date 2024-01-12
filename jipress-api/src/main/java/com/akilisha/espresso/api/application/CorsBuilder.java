@@ -4,6 +4,7 @@ import java.util.function.Function;
 
 public class CorsBuilder {
 
+
     private RequestCors requestCors;
     private ResponseCors responseCors;
 
@@ -33,16 +34,22 @@ public class CorsBuilder {
             cors.put(CorsOptions.Option.ACCESS_CONTROL_REQUEST_HEADERS_HEADER, String.join(",", this.requestCors.requestHeaders));
 
         //response headers
-        if (this.responseCors != null && this.responseCors.allowOrigin != null)
-            cors.put(CorsOptions.Option.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, this.responseCors.allowOrigin);
-        if (this.responseCors != null && this.responseCors.allowHeaders != null)
-            cors.put(CorsOptions.Option.ACCESS_CONTROL_ALLOW_HEADERS_HEADER, String.join(",", this.responseCors.allowHeaders));
-        if (this.responseCors != null && this.responseCors.allowMethod != null)
-            cors.put(CorsOptions.Option.ACCESS_CONTROL_ALLOW_METHOD_HEADER, String.join(",", this.responseCors.allowMethod));
-        if (this.responseCors != null && this.responseCors.maxAge != null)
-            cors.put(CorsOptions.Option.ACCESS_CONTROL_MAX_AGE_HEADER, Long.toString(this.responseCors.maxAge));
-        if (this.responseCors != null && this.responseCors.allowCredentials != null)
-            cors.put(CorsOptions.Option.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER, Boolean.toString(this.responseCors.allowCredentials));
+        if (this.responseCors != null && this.responseCors.allowedOrigins != null)
+            cors.put(CorsOptions.Option.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, String.join(",", this.responseCors.allowedOrigins));
+        if (this.responseCors != null && this.responseCors.allowedHeaders != null)
+            cors.put(CorsOptions.Option.ACCESS_CONTROL_ALLOW_HEADERS_HEADER, String.join(",", this.responseCors.allowedHeaders));
+        if (this.responseCors != null && this.responseCors.allowedMethods != null)
+            cors.put(CorsOptions.Option.ACCESS_CONTROL_ALLOW_METHODS_HEADER, String.join(",", this.responseCors.allowedMethods));
+        if (this.responseCors != null && this.responseCors.preflightMaxAge != null)
+            cors.put(CorsOptions.Option.ACCESS_CONTROL_MAX_AGE_HEADER, Long.toString(this.responseCors.preflightMaxAge));
+        if (this.responseCors != null && this.responseCors.allowedCredentials != null)
+            cors.put(CorsOptions.Option.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER, Boolean.toString(this.responseCors.allowedCredentials));
+        if (this.responseCors != null && this.responseCors.allowedTimingOrigins != null)
+            cors.put(CorsOptions.ALLOWED_TIMING_ORIGINS_PARAM, String.join(",", this.responseCors.allowedTimingOrigins));
+        if (this.responseCors != null && this.responseCors.exposedHeaders != null)
+            cors.put(CorsOptions.EXPOSED_HEADERS_PARAM, String.join(",", this.responseCors.exposedHeaders));
+
+        //return configured options
         return cors;
     }
 
@@ -78,57 +85,72 @@ public class CorsBuilder {
 
     public static class ResponseCors {
 
-        String allowOrigin;
-        String[] allowMethod;
-        String[] allowHeaders;
-        Long maxAge;
-        Boolean allowCredentials;
+        String[] allowedOrigins;
+        String[] allowedMethods;
+        String[] allowedHeaders;
+        Long preflightMaxAge;
+        Boolean allowedCredentials;
+        String[] allowedTimingOrigins;
+        String[] exposedHeaders;
 
-        public ResponseCors(String allowOrigin, String[] allowMethod, String[] allowHeaders,
-                            Long maxAge, Boolean allowCredentials) {
-            this.allowOrigin = allowOrigin;
-            this.allowMethod = allowMethod;
-            this.allowHeaders = allowHeaders;
-            this.maxAge = maxAge;
-            this.allowCredentials = allowCredentials;
+        public ResponseCors(String[] allowedOrigins, String[] allowedMethods, String[] allowedHeaders, Long preflightMaxAge, Boolean allowedCredentials, String[] allowedTimingOrigins, String[] exposedHeaders) {
+            this.allowedOrigins = allowedOrigins;
+            this.allowedMethods = allowedMethods;
+            this.allowedHeaders = allowedHeaders;
+            this.preflightMaxAge = preflightMaxAge;
+            this.allowedCredentials = allowedCredentials;
+            this.allowedTimingOrigins = allowedTimingOrigins;
+            this.exposedHeaders = exposedHeaders;
         }
     }
 
     public static class ResponseCorsBuilder {
 
-        private String allowOrigin;
-        private String[] allowMethods;
-        private String[] allowHeaders;
-        private Long maxAge;
-        private Boolean allowCredentials;
+        private String[] allowedOrigins;
+        private String[] allowedMethods;
+        private String[] allowedHeaders;
+        private Long preflightMaxAge;
+        private Boolean allowedCredentials;
+        private String[] allowedTimingOrigins;
+        private String[] exposedHeaders;
 
-        public ResponseCorsBuilder allowOrigin(String origin) {
-            this.allowOrigin = origin;
+        public ResponseCorsBuilder allowedOrigins(String... origins) {
+            this.allowedOrigins = origins;
             return this;
         }
 
-        public ResponseCorsBuilder allowMethods(String... methods) {
-            this.allowMethods = methods;
+        public ResponseCorsBuilder allowedMethods(String... methods) {
+            this.allowedMethods = methods;
             return this;
         }
 
-        public ResponseCorsBuilder allowHeaders(String... headers) {
-            this.allowHeaders = headers;
+        public ResponseCorsBuilder allowedHeaders(String... headers) {
+            this.allowedHeaders = headers;
             return this;
         }
 
-        public ResponseCorsBuilder maxAge(Long age) {
-            this.maxAge = age;
+        public ResponseCorsBuilder exposedHeaders(String... headers) {
+            this.exposedHeaders = headers;
             return this;
         }
 
-        public ResponseCorsBuilder allowCredentials(Boolean allow) {
-            this.allowCredentials = allow;
+        public ResponseCorsBuilder allowedTimingOrigins(String... origins) {
+            this.allowedTimingOrigins = origins;
+            return this;
+        }
+
+        public ResponseCorsBuilder preflightMaxAge(Long maxAge) {
+            this.preflightMaxAge = maxAge;
+            return this;
+        }
+
+        public ResponseCorsBuilder allowedCredentials(Boolean allow) {
+            this.allowedCredentials = allow;
             return this;
         }
 
         public ResponseCors build() {
-            return new ResponseCors(allowOrigin, allowMethods, allowHeaders, maxAge, allowCredentials);
+            return new ResponseCors(allowedOrigins, allowedMethods, allowedHeaders, preflightMaxAge, allowedCredentials, allowedTimingOrigins, exposedHeaders);
         }
     }
 }

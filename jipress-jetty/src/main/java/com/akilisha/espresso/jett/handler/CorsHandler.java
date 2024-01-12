@@ -57,8 +57,8 @@ public class CorsHandler extends HandlerWrapper {
 
         // this is necessary when pre-flighting to allow cross-origin requests
         if (isPreflightRequest(request)) {
-            if (options.get(ACCESS_CONTROL_ALLOW_METHOD_HEADER) != null) {
-                response.addHeader(CorsOptions.Option.ACCESS_CONTROL_ALLOW_METHOD_HEADER.name, options.get(ACCESS_CONTROL_ALLOW_METHOD_HEADER));
+            if (options.get(ACCESS_CONTROL_ALLOW_METHODS_HEADER) != null) {
+                response.addHeader(CorsOptions.Option.ACCESS_CONTROL_ALLOW_METHODS_HEADER.name, options.get(ACCESS_CONTROL_ALLOW_METHODS_HEADER));
             }
 
             response.setStatus(HttpServletResponse.SC_ACCEPTED);
