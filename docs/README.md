@@ -42,7 +42,7 @@ A _plugin_ differs from an _extension_ in several significant ways:
 2. In a _Plugin_, the implementing class is provided with a _IRouter_ where it can then attach instances of
    _IMiddleware_, and then the application will add this _IRouter_ to itself as a child application.
 3. In an _Extension_, the implementing class is provided with an _extensionPoint_ where it can then attach onto
-   additional behavior - ```<T> void extendWith(T extensionPoint)``. Specifically, the extension point is the
+   additional behavior - ```<T> void extendWith(T extensionPoint)```. Specifically, the extension point is the
    _ContextHandlerCollection_ and the additional behavior is in the form of a new ContextHandler.
 4. The level of familiarity with the underlying infrastructure necessary to implement either of the two options is more
    low-level when working with _IExtension_ than when working with _IPlugin_

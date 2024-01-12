@@ -15,6 +15,7 @@ public class OptBuilder {
         this.add("securePort", true, "secure listening port", false);
         this.add("redirectSecure", true, "redirect from http to https", false);
         this.add("deployEnv", true, "deployment environment (dev, prod, test, int, stage)", false);
+        this.add("watch", false, "watching plugins dir for changes", false);
 
         // keystore
         this.add("keystorePass", true, "keystore password", false);
@@ -25,8 +26,9 @@ public class OptBuilder {
         this.add("viewEngines", true, "view engine plugins sub-directory", false);
         this.add("bodyParsers", true, "body parser plugins sub-directory", false);
         this.add("routerHandles", true, "router handle plugins sub-directory", false);
+
+        // extensions
         this.add("ctxExtensions", true, "context extension plugins sub-directory", false);
-        this.add("watch", false, "watching plugins dir for changes", false);
 
         // static resources
         this.add("resourcesCtx", true, "context path to use for looking up static files", false);
