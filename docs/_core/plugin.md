@@ -1,15 +1,15 @@
 ## Plugin
 
-A _Plugin_, in the context of the _jipress framework_, is an abstraction that can best be understood by examining its 
+A _Plugin_, in the context of the _jipress framework_, is an abstraction that can best be understood by examining its
 core characteristics:
 
-1. attach new behavior or replace existing behavior in the _jipress_ framework through implementing certain designated 
-interfaces.
+1. attach new behavior or replace existing behavior in the _jipress_ framework through implementing certain designated
+   interfaces.
 2. package the well-tested, implementation classes as a library module in a pre-defined manner.
-3. make the packaged jars available in either the class-path (traditional way, but still vastly used) or in the 
-module-path (more modern way, but not vastly used).
+3. make the packaged jars available in either the class-path (traditional way, but still vastly used) or in the
+   module-path (more modern way, but not vastly used).
 
-In doing this, the target classes in the loaded jars will be picked up by the framework's _ServiceLoader_ and get 
+In doing this, the target classes in the loaded jars will be picked up by the framework's _ServiceLoader_ and get
 integrated with the rest of the framework as it loads up.
 
 The interfaces that are currently loadable as plugin extensions are:
@@ -19,6 +19,7 @@ The interfaces that are currently loadable as plugin extensions are:
 3. _IRouterHandle_
 
 For the first two interfaces, the default implementations are already provided through the following modules:
+
 1. _plugins-content_: provides implementations for _IBodyParser_
 
 <img src="../_media/plugins-content.png" alt="content module" width="400"/>
@@ -27,7 +28,7 @@ For the first two interfaces, the default implementations are already provided t
 
 <img src="../_media/plugins-views.png" alt="view module" width="400"/>
 
-The third interface, however, is meant to meet the specific needs of individual developers and not those of the 
+The third interface, however, is meant to meet the specific needs of individual developers and not those of the
 framework, and hence the only available implementation is a demonstration module, and developers are expected to provide
 their own implementations.
 
@@ -48,10 +49,10 @@ public interface IRouterHandle {
 }
 ```
 
-The _String contextPath()_ method should return a unique identifier which will be used in the request URL as the base 
+The _String contextPath()_ method should return a unique identifier which will be used in the request URL as the base
 _context path_.
 
-The _void init(IRouter app)_ method will get an opportunity to load _IMiddleware_ handlers to the _IRouter_ app, before 
+The _void init(IRouter app)_ method will get an opportunity to load _IMiddleware_ handlers to the _IRouter_ app, before
 it is loaded and integrated into the framework during start-up.
 
 ```java
@@ -115,6 +116,7 @@ public class BeforeAllHandler implements IMiddleware {
 #### RequestHandler
 
 ```java
+
 @RequiredArgsConstructor
 public class RequestHandler implements IMiddleware {
 
@@ -134,22 +136,23 @@ plugins-routable/src/main/resources/
 `-- META-INF
     `-- services
         `-- com.akilisha.espresso.api.plugin.IRouterHandle
+        
 ```
 
 #### Service Implementations
 
-Inside the ServiceLoader resource file, there is just one entry, since this module has only one implementation of 
+Inside the ServiceLoader resource file, there is just one entry, since this module has only one implementation of
 _IRouterHandle_ ```com.akilisha.espresso.plugin.router.RouterHandleDemo```
 
-This method of specifying the Service class is using the class-path loading mechanism. If module-path was in play 
-instead, this last step would not have been necessary. Simply adding a ```module-info.java``` file into the source 
+This method of specifying the Service class is using the class-path loading mechanism. If module-path was in play
+instead, this last step would not have been necessary. Simply adding a ```module-info.java``` file into the source
 folder would be sufficient to make the module discoverable by Java's ServiceLoading mechanism automatically.
 
 #### Loading plugin options
 
 There are four important ```cli options``` to remember when loading plugins. Plugins and extensions are organized under
 a single root folder, reference by the ```pluginsHome``` variable. Beneath the root folder, other folders may exist
-and specify where certain jars are located. There are referenced through the ```viewEngines```, ```bodyParsers``` and 
+and specify where certain jars are located. There are referenced through the ```viewEngines```, ```bodyParsers``` and
 ```routerHandles``` variable names.
 
 | variable name | description                         |
