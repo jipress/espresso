@@ -6,13 +6,13 @@ import com.akilisha.espresso.jett.Espresso;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class WordPressExtension {
+public class PiwigoExtDemo {
 
     public static void main(String[] args) {
-        System.setProperty("WORDPRESS_HOME", "C:\\Projects\\wordpress");
+        System.setProperty("APPLICATION_HOME", "C:\\Projects\\piwigo");
         Directories.PLUGINS.put(DirectoryInfo.PLUGINS_HOME, "C:\\Projects\\java\\espresso");
-        Directories.PLUGINS.put(DirectoryInfo.CTX_EXTENSIONS, "ext-wordpress/build/libs");
+        Directories.PLUGINS.put(DirectoryInfo.CTX_EXTENSIONS, "extension-fastcgi/build/libs");
         var app = Espresso.express();
-        app.listen(9080);
+        app.listen(9082, new String[]{"-securePort", "9086"});
     }
 }

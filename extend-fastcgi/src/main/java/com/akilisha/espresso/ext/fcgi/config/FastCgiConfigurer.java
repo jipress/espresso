@@ -1,4 +1,4 @@
-package com.akilisha.espresso.ext.wp.config;
+package com.akilisha.espresso.ext.fcgi.config;
 
 import jakarta.servlet.DispatcherType;
 import org.eclipse.jetty.fcgi.server.proxy.FastCGIProxyServlet;

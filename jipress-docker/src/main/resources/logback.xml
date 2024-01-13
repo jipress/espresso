@@ -5,7 +5,7 @@
         </encoder>
     </appender>
 
-    <logger name="works.hop.express" level="DEBUG"/>
+    <logger name="com.akilisha.espresso" level="DEBUG"/>
 
     <root level="debug">
         <appender-ref ref="STDOUT"/>

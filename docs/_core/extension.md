@@ -97,7 +97,7 @@ ext-wordpress/src/main/resources/
 #### Service Implementations
 
 Inside the ServiceLoader resource file, there is just one entry, since this module has only one implementation of
-_IRouterHandle_ ```com.akilisha.espresso.ext.wp.WordPressExtension```
+_IRouterHandle_ ```com.akilisha.espresso.ext.fcgi.FastCgiExtension```
 
 This method of specifying the Service class is using the class-path loading mechanism. If module-path was in play
 instead, this last step would not have been necessary. Simply adding a ```module-info.java``` file into the source

@@ -7,5 +7,5 @@ include 'jipress-jetty'
 include 'plugins-views'
 include 'plugins-content'
 include 'plugins-routable'
-include 'ext-wordpress'
+include 'extend-fastcgi'
 
