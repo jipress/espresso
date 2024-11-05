@@ -24,7 +24,7 @@ class WebsocketRouter {
                 .subProtocols(List.of("protocolOne"))
                 .pulseInterval(20000)
                 .websocketPath("/events/*")
-                .build(), (ws) -> {
+                .build(), (params, ws) -> {
 
             ws.onConnect(session -> {
                 Session sess = (Session) session;

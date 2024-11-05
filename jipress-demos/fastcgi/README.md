@@ -20,7 +20,8 @@ In this case, the caller is Jetty
 
 1. Pull image - ```docker pull container-registry.oracle.com/mysql/community-server```
 2. Start
-   container - ```docker run --name=local-mysql-server --restart on-failure -p 3306:3306 -d container-registry.oracle.com/mysql/community-server```
+   container -
+   ```docker run --name=local-mysql-server --restart on-failure -p 3306:3306 -d container-registry.oracle.com/mysql/community-server```
 3. Retrieve generated password - ```docker logs local-mysql-server 2>&1 | grep GENERATED```
 4. Use generated password to sign into container - ```docker exec -it local-mysql-server mysql -uroot -p```
 5. Change default password - ```mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY '<new password>';```

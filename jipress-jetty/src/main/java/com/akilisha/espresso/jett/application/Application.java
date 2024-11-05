@@ -33,6 +33,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import static com.akilisha.espresso.jett.application.PathUtils.extractWebsocketPathParams;
 import static com.akilisha.espresso.jett.config.ConfigMap.MULTIPART_CONFIG;
 
 @Getter
@@ -243,12 +244,11 @@ public class Application extends Router implements IApplication, Cloneable {
 
     @Override
     public void use(IErrorHandler... handlers) {
-        Arrays.asList(handlers).forEach(handler ->
-                this.errorHandlers.add(0, handler));
+        Arrays.asList(handlers).forEach(this.errorHandlers::addFirst);
     }
 
     @Override
-    public void websocket(String contextPath, IWebsocketOptions options, Consumer<WebsocketHandlerCreator<?>> creator) {
+    public void websocket(String contextPath, IWebsocketOptions options, BiConsumer<Map<String, String>, WebsocketHandlerCreator<?>> creator) {
         ServletContextHandler websocketHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         websocketHandler.setContextPath(contextPath);
 
@@ -260,11 +260,13 @@ public class Application extends Router implements IApplication, Cloneable {
             container.addMapping(options.websocketPath(), (upgradeRequest, upgradeResponse) -> {
 
                 //possible to inspect upgrade request and modify upgrade response
-                upgradeResponse.setAcceptedSubProtocol(options.subProtocols().get(0));
+                upgradeResponse.setAcceptedSubProtocol(options.subProtocols().getFirst());
+
+                Map<String, String> pathParams = extractWebsocketPathParams(upgradeRequest);
 
                 //provider a builder for websocket endpoints
                 WebSocketListenerCreator handlerCreator = new WebSocketListenerCreator(getExecutorService(), options.pingInterval());
-                creator.accept(handlerCreator);
+                creator.accept(pathParams, handlerCreator);
 
                 //return a websocket endpoint
                 return handlerCreator.build();
