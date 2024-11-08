@@ -113,9 +113,14 @@ public class PathUtils {
     }
 
     public static Map<String, String> extractWebsocketPathParams(JettyServerUpgradeRequest upgradeRequest) {
-        // Retrieve the URI template.
-        UriTemplatePathSpec pathSpec = (UriTemplatePathSpec) upgradeRequest.getServletAttribute(PathSpec.class.getName());
-        // Match the URI template.
-        return pathSpec.getPathParams(upgradeRequest.getRequestPath());
+        try {
+            // Retrieve the URI template.
+            UriTemplatePathSpec pathSpec = (UriTemplatePathSpec) upgradeRequest.getServletAttribute(PathSpec.class.getName());
+            // Match the URI template.
+            return pathSpec.getPathParams(upgradeRequest.getRequestPath());
+        }
+        catch (Exception e) {
+            return Collections.emptyMap();
+        }
     }
 }

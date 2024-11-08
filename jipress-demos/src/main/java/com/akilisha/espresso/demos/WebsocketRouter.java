@@ -20,17 +20,24 @@ class WebsocketRouter {
                 .acceptRanges(true)
                 .listDirectories(false)
                 .build());
+
         app.websocket("/ws/", WebsocketOptionsBuilder.newBuilder()
                 .subProtocols(List.of("protocolOne"))
                 .pulseInterval(20000)
-                .websocketPath("/events/*")
+                .websocketPath("uri-template|/events/{name}")
                 .build(), (params, ws) -> {
+
+//        app.websocket("/ws/", WebsocketOptionsBuilder.newBuilder()
+//                .subProtocols(List.of("protocolOne"))
+//                .pulseInterval(20000)
+//                .websocketPath("/events")
+//                .build(), (params, ws) -> {
 
             ws.onConnect(session -> {
                 Session sess = (Session) session;
                 System.out.println("Socket connected: " + session);
                 try {
-                    sess.getRemote().sendString("Connection accepted");
+                    sess.getRemote().sendString(String.format("{\"status\": \"Connection accepted with %d params\"}", params.size()));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
