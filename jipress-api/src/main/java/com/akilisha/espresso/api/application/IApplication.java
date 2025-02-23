@@ -106,5 +106,5 @@ public interface IApplication extends IRouter {
 
     void use(IErrorHandler... handlers);
 
-    void websocket(String contextPath, IWebsocketOptions options, Consumer<WebsocketHandlerCreator<?>> creator);
+    void websocket(String contextPath, IWebsocketOptions options, BiConsumer<Map<String, String>, WebsocketHandlerCreator<?>> creator);
 }

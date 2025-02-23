@@ -13,7 +13,7 @@ repositories {
 
 dependencies {
     implementation project(':jipress-api')
-    compileOnly("org.eclipse.jetty:jetty-server:11.0.16")
+    compileOnly("org.eclipse.jetty:jetty-server:11.0.20")
     implementation 'com.jayway.jsonpath:json-path:2.8.0'
 
     compileOnly 'org.projectlombok:lombok:1.18.30'

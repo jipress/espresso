@@ -1,5 +1,9 @@
 package com.akilisha.espresso.jett.application;
 
+import org.eclipse.jetty.http.pathmap.PathSpec;
+import org.eclipse.jetty.http.pathmap.UriTemplatePathSpec;
+import org.eclipse.jetty.websocket.server.JettyServerUpgradeRequest;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -106,5 +110,17 @@ public class PathUtils {
                     }
                     return acc;
                 }, (x, y) -> x);
+    }
+
+    public static Map<String, String> extractWebsocketPathParams(JettyServerUpgradeRequest upgradeRequest) {
+        try {
+            // Retrieve the URI template.
+            UriTemplatePathSpec pathSpec = (UriTemplatePathSpec) upgradeRequest.getServletAttribute(PathSpec.class.getName());
+            // Match the URI template.
+            return pathSpec.getPathParams(upgradeRequest.getRequestPath());
+        }
+        catch (Exception e) {
+            return Collections.emptyMap();
+        }
     }
 }
