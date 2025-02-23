@@ -140,8 +140,8 @@ app.all("/*", requireAuthentication)
 app.all("/*", loadUser)
 ```
 
-Another example is whitelisted “global” functionality. The example is similar to the ones above, but it only restricts
-paths that start with “/api”:
+Another example is whitelisted "global" functionality. The example is similar to the ones above, but it only restricts
+paths that start with "/api":
 
 app.all("/api/*", requireAuthentication)
 
@@ -248,6 +248,15 @@ app.get("title")
 // => "My Site"
 ```
 
+### <T>T get(String setting, Function<Object, T> converter)
+
+Performs the exact same action as ```app.get(setting)``` and in addition, it provides the opportunity to coerce the
+setting value to a designated type through a converter function.
+
+```java
+int subDomainOffset = app.get(AppSettings.Setting.SUBDOMAIN_OFFSET.property, o -> Integer.parseInt(o.toString()));
+```
+
 #### void get(String path, IMiddleware... middlewares);
 
 Routes HTTP GET requests to the specified path with the specified callback functions.
@@ -277,7 +286,11 @@ app.get("/",  (req, res, next) {
 
 #### void listen(int port)
 
+#### void listen(int port, String[] args)
+
 #### void listen(String host, int port, Consumer<String> callback)
+
+### void listen(String host, int port, String[] args, Consumer<String> callback)
 
 Binds and listens for connections on the specified host and port.
 
@@ -290,6 +303,14 @@ If host is omitted, then localhost will be implied and used
 ```bash
 var app = express()
 app.listen(3000)
+```
+
+When the _args_ parameter is included, the command line arguments are passed along and applied to the options available
+for starting the server up.
+
+```bash
+var app = express()
+app.listen(3000, args)
 ```
 
 #### void method(String name, String path, IMiddleware... middlewares)
@@ -318,8 +339,14 @@ IMiddleware functions; can be:
 #### void param(String[] params, IParamCallback callback)
 
 Add callback triggers to route parameters, where name is the name of the parameter or an array of them, and callback is
-the callback function. The parameters of the callback function are the request object, the response object, the next
-middleware, the value of the parameter and the name of the parameter, in that order.
+the callback function.
+
+The parameters of the callback function are:
+
+- req, the request object.
+- res, the response object.
+- next, indicating the next middleware function.
+- The value of the name parameter.
 
 ```bash
 public static void main(String[] args) {
@@ -383,7 +410,7 @@ Returns the rendered HTML of a view via the callback function. It accepts an opt
 containing local variables for the view. It is like res.render(), except it cannot send the rendered view to the client
 on its own.
 
-It's actually used by the IResponse instance to generate content, which then the IResponse instance send to the client
+It's actually used by the IResponse instance to generate content, which then the IResponse instance sends to the client
 
 ```bash
  @Override
@@ -455,12 +482,183 @@ public static void main(String[] args) {
 
 #### void use(CorsOptions options);
 
-Configure CORS options when using cross domain clients
+Configure CORS options when using cross-domain clients
 
 ```bash
     var app = express();
-    app.use(new CorsOptions());
+    app.use(CorsOptions.wideOpen());
 ```
+
+Using the ```wideOpen``` function as shown above, should _ONLY_ be considered for testing purposes only, since it is
+the most permissive configuration that can be achieved. A more controlled configuration should be created by using the
+_CorsBuilder_.
+
+To illustrate CORS further, consider having two apps:
+
+- The data source app
+
+> The data source makes available data to be consumed by interested clients
+
+```java
+public static void main(String[] args) {
+    var app = Espresso.express();
+    app.use(Espresso.text());
+
+    app.get("/time", (req, res, next) -> res.send(new Date().toString()));
+
+    app.listen(3031);
+}
+```
+
+- The data client app
+
+> Remember to start the second one with command line argument ```-securePort 3444``` to override any matching defaults
+
+```java
+public static void main(String[] args) {
+    var app = Espresso.express();
+    app.use("/", IStaticOptionsBuilder.newBuilder()
+            .baseDirectory("jipress-demos/www")
+            .welcomeFiles("cors-handlers.html")
+            .build());
+
+    app.listen(3030, args);
+}
+```
+
+The data client contains the ```cors-handlers.html``` page which is used to initiate http requests from the browser.
+
+```html
+
+<body>
+<a href="http://localhost:3031/time">Click to view time now</a>
+<h1></h1>
+<script>
+    document.querySelector("a").addEventListener('click', ev => {
+        ev.preventDefault();
+        fetch(ev.target.href, res => {
+            document.querySelector("h1").innerHTML = res.text;
+        })
+    })
+</script>
+</body>
+```
+
+When the link on the page is clicked, a ```GET http://localhost:3031/time``` request is made, but this is not in the
+same domain as the one which is hosting the web page (hence cross-site). An error is returned, and can be view through
+the browser's developer tools
+
+![cor missing allow origin header](../_media/cors-missing-allow-origin.png)
+
+To overcome this, the server needs to be configured to return the ```Access-Control-Allow-Origin ``` and the value
+could be either specific to the requesting server, in this case like ```http://localhost:3030``` or much more loose,
+like using ```*```
+
+```bash
+var app = Espresso.express();
+app.use(Espresso.text());
+app.use(CorsBuilder.newBuilder()
+       .response(bld -> bld.allowOrigin("http://localhost:3030").build())
+       .build());
+
+app.get("/time", (req, res, next) -> {
+   res.send(new Date().toString());
+});
+
+app.listen(3031);
+```
+
+![Cors with Origin allowed](../_media/cors-with-origin-allowed.png)
+
+Upon inspecting the response in the browser further, the configured header is now in the response body.
+
+![allowed origin header](../_media/access-control-allow-origin-header.png)
+
+With CORS, there is another concept called _preflight requests_, and this is what the _OPTIONS_ http method
+accomplishes.
+It is an additional check which is not applied to _GET_ but it is applied to the other non-idempotent http methods.
+
+In the _data source_ app, add a new request handler for _PUT_ requests
+
+```bash
+app.put("/time", (req, res, next) -> {
+   res.send(new Date().toString());
+});
+```
+
+In the _data_client_ app, change the browser script to use _PUT_ instead of _GET_.
+
+```js
+document.querySelector("a").addEventListener('click', ev => {
+    ev.preventDefault();
+    fetch(ev.target.href, {method: 'PUT'}, res => {
+        document.querySelector("h1").innerHTML = res.text;
+    })
+})
+```
+
+Restart both apps and make the same request as before.
+
+When the server is not handling pre-flight requests, the request will fail as shown below.
+
+![no pre-flight checks failure](../_media/pre-flight-check-failure.png)
+
+When the server is handling pre-flight requests, but the request method is not configured, the request will fail as
+shown below.
+
+![pre-flight check without method](../_media/pre-flight-no-method-failure.png)
+
+To correct this, the request method should be configured, and the configured methods should contain the method specified
+in the _Allow-Control-Request-Method_ header (if using a browser, this header is typically inserted in the request
+automatically).
+
+```bash
+app.use(CorsBuilder.newBuilder()
+.response(bld -> bld
+      .allowOrigin("http://localhost:3030")
+      .allowHeaders("PUT")
+      .build())
+.build());
+```
+
+After configuring and restarting the _data source_, the response should now look good.
+
+![pre-flight successful](../_media/pre-flight-method-check-ok.png)
+
+Another dimension of CORS is when using credentials from the client. In the client, make this update to see the effect.
+
+```js
+document.querySelector("a").addEventListener('click', ev => {
+    ev.preventDefault();
+    fetch(ev.target.href, {
+        method: 'PUT', credentials: "include",
+    }, res => {
+        document.querySelector("h1").innerHTML = res.text;
+    })
+})
+```
+
+Upon making the same request in the browser and inspecting the response, CORS once again find away to crash the party.
+
+![credentials conft configured failure](../_media/allow-credentials-header-not-configured.png)
+
+To resolve this, an additional configuration needs to be done in the _data server_ app.
+
+```bash
+app.use(CorsBuilder.newBuilder()
+ .response(bld -> bld
+         .allowOrigin("http://localhost:3030")
+         .allowMethods("PUT")
+         .allowCredentials(true)
+         .build())
+ .build());
+```
+
+And the result now is back to looking good
+
+![access-control-allow-credentials_ok](../_media/access-control-allow-credentials_ok.png)
+
+The _CorsBuilder_ has additional methods for more CORS configuration options.
 
 #### void use(String usePath, IApplication subApp)
 
@@ -520,15 +718,15 @@ public static void main(String[] args) {
 
 #### void use(String path, IStaticOptions options)
 
-Configures the respective static content request handlers with the respective application, at the application's mount
+Configure the respective static content request handlers with the respective application, at the application's mount
 path or relative to the mount path
 
 ```bash
 public static void main(String[] args) {
         var app = express();
         
-        app.use(StaticOptionsBuilder.newBuilder().baseDirectory("presso-jetty/view").build());
-        app.use("/home", StaticOptionsBuilder.newBuilder().baseDirectory("presso-jetty/view").build());
+        app.use(StaticOptionsBuilder.newBuilder().baseDirectory("jipress-jetty/view").build());
+        app.use("/home", StaticOptionsBuilder.newBuilder().baseDirectory("jipress-jetty/view").build());
 
         app.use((req, res, next) -> {
             res.locals().put("name", "Jimmy");
@@ -546,7 +744,7 @@ public static void main(String[] args) {
 
 #### void use(IErrorHandler... handlers)
 
-Registers custom error handling middleware with the application. A default error handler is used to suppress the stack
+Register custom error handling middleware with the application. A default error handler is used to suppress the stack
 trace generated by application errors, and simply prints the message.
 
 A use is encouraged to register their custom error handlers, which can be targeted by using an error code
@@ -617,7 +815,7 @@ An illustration for registering method handlers is shown below. Point worth noti
 ```bash
 public static void main(String[] args) {
     var app = express();
-    app.use(StaticOptionsBuilder.newBuilder().baseDirectory("presso-jetty/view")..welcomeFiles("websocket.html").build());
+    app.use(StaticOptionsBuilder.newBuilder().baseDirectory("jipress-jetty/view")..welcomeFiles("websocket.html").build());
     app.websocket("/ws/", WebsocketOptionsBuilder.newBuilder().subProtocols(List.of("protocolOne"))
                 .pulseInterval(20000).websocketPath("/events/*").build(), (ws) -> {
         ws.onConnect(session -> {
